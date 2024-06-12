@@ -1,0 +1,8 @@
+Dec 20: Need to fix get playlist URIs and
+then test calculate audio features, also
+need to add some sort of minimum value for comparison.
+
+Fixed the playlist URIs, got the average audio features.
+Still need to add comparison feature for minimum ratio check.
+Also need to find a way to add a genre, artist, or track seed
+when I don't want to (like in large playlists.)

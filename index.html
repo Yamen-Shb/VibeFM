@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify App</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#recommend-form').submit(function(e) {
+                e.preventDefault();
+                var seed = $('#seed').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/recommend_songs',
+                    data: JSON.stringify({ 'seed': seed }),
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function(data) {
+                        // Update the page with the recommended songs
+                        console.log(data);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Spotify App</h1>
+    <form id="recommend-form">
+        <input type="text" id="seed" placeholder="Enter a seed...">
+        <button type="submit">Recommend Songs</button>
+    </form>
+    <div id="results"></div>
+</body>
+</html>
