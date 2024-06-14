@@ -3,7 +3,6 @@ import spotify_utils
 import playlist_manager
 import random
 
-
 def chooseSeed(sp, username):
     print("Choose your seed:")
     print("1. Search for a Song")

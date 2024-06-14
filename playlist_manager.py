@@ -1,7 +1,6 @@
 import spotify_utils
 import time
 
-
 def createPlaylist(sp):
     # Define the name and description for your new playlist
     playlistName = input('Your Playlist Name: ')

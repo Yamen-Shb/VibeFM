@@ -1,6 +1,5 @@
 import spotify_utils
 
-
 # Get the user's top tracks
 def topTracks(sp):
     validInput = True
