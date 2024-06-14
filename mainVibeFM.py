@@ -13,7 +13,7 @@ import user_authentication
 artistCache = {}
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Set a secret key for the session
+app.secret_key = os.environ.get('SECRET_KEY')
 
 @app.route('/')
 def home():
@@ -64,12 +64,10 @@ def app_route():
     # Retrieve the username from the session
     username = session.get('username')
 
-    # Call the necessary functions from your other modules
-    recommend_songs.recommendBasedOnSeed(sp, username)
-    # Call other functions as needed
-
     # Render the main application template
-    return render_template('index.html')
+    print("Rendering app.html template")
+    return render_template('app.html', username=username)
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
