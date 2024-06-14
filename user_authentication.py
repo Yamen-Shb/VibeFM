@@ -18,12 +18,16 @@ lastfm_api_key = os.getenv('LASTFM_API_KEY')
 # Define the Spotify OAuth scope
 scope = 'user-library-read playlist-modify-private user-read-recently-played user-top-read user-read-playback-state user-read-currently-playing playlist-modify-public playlist-modify-private playlist-read-private'
 
+# Set a custom cache path
+cache_path = ".spotify_cache"
+
 # Create the SpotifyOAuth object
 sp_oauth = SpotifyOAuth(
     client_id=client_id,
     client_secret=client_secret,
     redirect_uri=redirect_uri,
     scope=scope,
+    show_dialog=True,
     requests_timeout= 30
 )
 
@@ -35,3 +39,8 @@ def get_auth_url():
 def get_tokens(code):
     token_info = sp_oauth.get_access_token(code)
     return token_info
+
+# Function to clear the cache
+def clear_cache():
+    if os.path.exists(cache_path):
+        os.remove(cache_path)

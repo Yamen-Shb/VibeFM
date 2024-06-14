@@ -23,7 +23,6 @@ def home():
 def login():
     # Redirect the user to the Spotify authentication URL
     auth_url = user_authentication.get_auth_url()
-    print(f"Auth URL: {auth_url}")  # Print the auth URL for debugging
     return redirect(auth_url)
 
 @app.route('/callback')
@@ -67,6 +66,15 @@ def app_route():
     # Render the main application template
     print("Rendering app.html template")
     return render_template('app.html', username=username)
+
+
+@app.route('/logout')
+def logout():
+    # Clear the session data
+    session.clear()
+    # Clear the Spotify OAuth cache
+    user_authentication.clear_cache()
+    return redirect('/')
 
 
 if __name__ == '__main__':
