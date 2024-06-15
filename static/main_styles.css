@@ -7,38 +7,42 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 100vh;
+    padding: 20px; /* Add padding to the body for better spacing */
 }
 
 header {
-    text-align: center;
-    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+    box-sizing: border-box; /* Ensure padding is included in total width */
 }
 
 h1 {
     margin: 0;
-    font-size: 2em;
+    font-size: 2.5em; /* Slightly larger font size */
     color: #1db954; /* Spotify green */
+    text-align: center;
+    margin-bottom: 40px; /* Increase margin for better spacing from the grids */
 }
 
 p {
     margin: 10px 0;
-    font-size: 1em;
+    font-size: 1.2em; /* Slightly larger font size */
     color: #b3b3b3; /* Lighter text color */
 }
 
 .logout-button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin-top: 10px;
-    font-size: 1em;
+    font-size: 1.2em; /* Slightly larger font size */
     color: white;
     background-color: #1db954; /* Spotify green */
     border: none;
     border-radius: 5px;
     text-decoration: none;
     cursor: pointer;
+    padding: 10px 20px;
     transition: background-color 0.3s;
 }
 
@@ -47,18 +51,24 @@ p {
 }
 
 /* Grid styles */
+main {
+    width: 100%;
+    max-width: 1200px; /* Increase max-width */
+    padding: 20px;
+    box-sizing: border-box; /* Ensure padding is included in total width */
+    flex-grow: 1;
+}
+
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 20px;
-    width: 80%;
-    max-width: 1000px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Make the grid responsive */
+    grid-gap: 30px; /* Increase the gap between grid items */
+    width: 100%; /* Use full width of the container */
 }
 
 .grid-item {
     background-color: #282828; /* Darker gray background */
-    padding: 20px;
+    padding: 40px; /* Increase padding */
     text-align: center;
     border-radius: 10px;
     color: white;
@@ -86,12 +96,12 @@ p {
 
 .grid-item h2 {
     margin-top: 0;
-    font-size: 1.5em;
+    font-size: 1.8em; /* Increase font size */
 }
 
 .grid-item p {
     margin: 10px 0 0;
-    font-size: 1em;
+    font-size: 1.2em; /* Increase font size */
 }
 
 .grid-item:hover {

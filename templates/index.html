@@ -4,10 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VibeFM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login_styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Welcome to VibeFM</h1>
-    <p>Please log in with your Spotify account to access the app.</p>
-    <a href="{{ url_for('login') }}">Log in with Spotify</a>
+    <div class="background-overlay"></div>
+    <header>
+        <h1>Welcome to VibeFM</h1>
+        <p>Please log in with your Spotify account to access the app.</p>
+        <a class="login-button" href="{{ url_for('login') }}">Log in with your Spotify account</a>
+    </header>
+    <footer>
+        <p>&copy; 2024 VibeFM. All rights reserved.</p>
+        <p>Follow us on <a href="#" target="_blank">Facebook</a>, <a href="#" target="_blank">Twitter</a>, and <a href="#" target="_blank">Instagram</a>.</p>
+    </footer>
 </body>
 </html>
