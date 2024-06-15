@@ -1,11 +1,6 @@
 import os
 from dotenv import load_dotenv
 import spotipy
-import recommend_songs
-import user_stats
-import playlist_manager
-import audio_features
-import spotify_utils
 from flask import Flask, render_template, request, redirect, session
 import user_authentication
 
