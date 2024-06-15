@@ -4,10 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VibeFM - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main_styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Welcome to VibeFM Dashboard, {{ username }}</h1>
-    <p>You are logged in with your Spotify account.</p>
-    <a href="/logout">Logout</a>
+    <header>
+        <h1>Welcome to VibeFM Dashboard, {{ name }}</h1>
+        <p>You are logged in with your Spotify account.</p>
+        <a class="logout-button" href="/logout">Logout</a>
+    </header>
+    <main>
+        <div class="grid-container">
+            <div class="grid-item">
+                <h2>Top Tracks</h2>
+                <p>Explore your most listened tracks.</p>
+            </div>
+            <div class="grid-item">
+                <h2>Top Artists</h2>
+                <p>Discover your favorite artists.</p>
+            </div>
+            <div class="grid-item">
+                <h2>Generate Songs</h2>
+                <p>Get song recommendations.</p>
+            </div>
+            <div class="grid-item">
+                <h2>Sort Songs</h2>
+                <p>Organize your music library.</p>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

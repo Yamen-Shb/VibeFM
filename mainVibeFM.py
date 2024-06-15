@@ -37,10 +37,13 @@ def callback():
 
     # Retrieve the user's information from Spotify
     user_info = sp.current_user()
-    username = user_info['id']
+    if 'display_name' in user_info and user_info['display_name']:
+        name = user_info['display_name']
+    else:
+        name = user_info['id']
 
     # Store the username in the session
-    session['username'] = username
+    session['name'] = name
 
     # Redirect the user to the main application page
     return redirect('/app')
@@ -56,11 +59,9 @@ def app_route():
     sp = spotipy.Spotify(auth=access_token)
 
     # Retrieve the username from the session
-    username = session.get('username')
+    name = session.get('name')
 
-    # Render the main application template
-    print("Rendering app.html template")
-    return render_template('app.html', username=username)
+    return render_template('app.html', name=name)
 
 
 @app.route('/logout')

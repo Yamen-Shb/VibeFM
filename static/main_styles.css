@@ -1,0 +1,101 @@
+/* General styles */
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #191414; /* Dark background similar to Spotify */
+    color: #ffffff; /* White text */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2em;
+    color: #1db954; /* Spotify green */
+}
+
+p {
+    margin: 10px 0;
+    font-size: 1em;
+    color: #b3b3b3; /* Lighter text color */
+}
+
+.logout-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    font-size: 1em;
+    color: white;
+    background-color: #1db954; /* Spotify green */
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #1ed760; /* Slightly lighter green on hover */
+}
+
+/* Grid styles */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+    width: 80%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.grid-item {
+    background-color: #282828; /* Darker gray background */
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    color: white;
+    transition: background-color 0.3s, transform 0.3s;
+    position: relative; /* Position for gradient overlay */
+    overflow: hidden; /* Ensure gradient doesn't overflow */
+}
+
+.grid-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(29,185,84,0.5) 0%, rgba(29,185,84,0) 70%); /* Spotify green gradient */
+    z-index: 1;
+    opacity: 0; /* Initially transparent */
+    transition: opacity 0.3s;
+}
+
+.grid-item:hover::before {
+    opacity: 1; /* Show gradient on hover */
+}
+
+.grid-item h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+}
+
+.grid-item p {
+    margin: 10px 0 0;
+    font-size: 1em;
+}
+
+.grid-item:hover {
+    background-color: #333333; /* Darker background on hover */
+    transform: scale(1.05);
+    z-index: 2; /* Ensure hovered item is on top */
+}
