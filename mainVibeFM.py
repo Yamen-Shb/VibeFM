@@ -88,6 +88,18 @@ def top_artists():
     return render_template('top_artists.html')
 
 
+@app.route('/top-artists/<time_range>')
+def get_top_artists(time_range):
+    access_token = session.get('access_token')
+    if access_token is None:
+        return redirect('/login')
+
+    sp = spotipy.Spotify(auth=access_token)
+    artists = user_stats.getTopArtists(sp, time_range)
+
+    return jsonify(artists)
+
+
 @app.route('/generate-songs')
 def generate_songs():
     # Call the backend to generate songs

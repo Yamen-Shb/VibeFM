@@ -8,13 +8,20 @@
 </head>
 <body>
     <header>
+        <a class="back-button" href="/app">Back to Dashboard</a>
         <a class="logout-button" href="/logout">Logout</a>
     </header>
     <main>
         <h1>Top Artists</h1>
-        <div>
-            <!-- Display top artists here -->
+        <div class="tabs">
+            <div class="tab-bar">
+                <button class="tab-button active" data-time-range="short_term">Last 4 Weeks</button>
+                <button class="tab-button" data-time-range="medium_term">Last 6 Months</button>
+                <button class="tab-button" data-time-range="long_term">Last Year</button>
+            </div>
         </div>
+        <div id="artists-list" class="grid-container"></div>
     </main>
+    <script src="{{ url_for('static', filename='scripts/top_artists.js') }}"></script>
 </body>
 </html>

@@ -21,7 +21,7 @@ def getTopTracks(sp, timeRange):
 
 
 def getTopArtists(sp, timeRange):
-    results = sp.current_user_top_tracks(limit=50, time_range=timeRange)
+    results = sp.current_user_top_artists(limit=50, time_range=timeRange)
     topArtists = []
 
     if 'items' in results and results['items']:
@@ -30,6 +30,7 @@ def getTopArtists(sp, timeRange):
     topArtistsInfo = [
         {
             'name': artist['name'],
+            'image': artist['images'][0]['url']
         }
         for artist in topArtists
     ]
