@@ -1,7 +1,7 @@
 import spotify_utils
 
 # Get the user's top tracks
-def topTracks(sp, timeRange):
+def getTopTracks(sp, timeRange):
     results = sp.current_user_top_tracks(limit=50, time_range=timeRange)
     topTracks = []
 
@@ -11,6 +11,7 @@ def topTracks(sp, timeRange):
     tracksInfo = [
         {
             'name': track['name'],
+            'image': track['album']['images'][0]['url'],
             'artists': ', '.join(artist['name'] for artist in track['artists'])
         }
         for track in topTracks
@@ -19,7 +20,7 @@ def topTracks(sp, timeRange):
     return tracksInfo
 
 
-def topArtists(sp, timeRange):
+def getTopArtists(sp, timeRange):
     results = sp.current_user_top_tracks(limit=50, time_range=timeRange)
     topArtists = []
 

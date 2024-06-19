@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Tracks - VibeFM</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='main_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main_styles.css') }}">
 </head>
 <body>
     <header>
@@ -12,9 +12,15 @@
     </header>
     <main>
         <h1>Top Tracks</h1>
-        <div>
-            <!-- Display top tracks here -->
+        <div class="tabs">
+            <div class="tab-bar">
+                <button class="tab-button active" data-time-range="short_term">Last 4 Weeks</button>
+                <button class="tab-button" data-time-range="medium_term">Last 6 Months</button>
+                <button class="tab-button" data-time-range="long_term">Last Year</button>
+            </div>
         </div>
+        <div id="tracks-list" class="grid-container"></div>
     </main>
+    <script src="{{ url_for('static', filename='scripts/top_tracks.js') }}"></script>
 </body>
 </html>

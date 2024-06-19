@@ -1,8 +1,9 @@
 import os
 from dotenv import load_dotenv
 import spotipy
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, jsonify
 import user_authentication
+import user_stats
 
 # Define a cache to store artist information and genres
 artistCache = {}
@@ -69,6 +70,17 @@ def top_tracks():
     # Call the backend to get top tracks
     return render_template('top_tracks.html')
 
+@app.route('/top-tracks/<time_range>')
+def get_top_tracks(time_range):
+    access_token = session.get('access_token')
+    if access_token is None:
+        return redirect('/login')
+
+    sp = spotipy.Spotify(auth=access_token)
+    tracks = user_stats.getTopTracks(sp, time_range)
+    
+    return jsonify(tracks)
+
 
 @app.route('/top-artists')
 def top_artists():
@@ -99,15 +111,3 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-
-#def main():
-#    import cProfile
-#    import pstats
-#    with cProfile.Profile() as pr:
-#        recommend_songs.recommendBasedOnSeed(sp, username)
-#    stats = pstats.Stats(pr)
-#    stats.sort_stats(pstats.SortKey.TIME)
-#    stats.print_stats()
-
-#if __name__ == '__main__':
-#    main()
