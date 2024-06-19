@@ -34,12 +34,29 @@ p {
     color: #b3b3b3;
 }
 
+.back-button {
+    font-size: 1.2em;
+    color: white;
+    background-color: #1db954;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+    margin-right: auto; /* Push the button to the left */
+}
+
+.back-button:hover {
+    background-color: #1ed760;
+}
+
 .logout-button {
     font-size: 1.2em;
     color: white;
     background-color: #1db954;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     text-decoration: none;
     cursor: pointer;
     padding: 10px 20px;
