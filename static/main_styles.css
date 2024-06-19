@@ -75,6 +75,13 @@ main {
     transition: background-color 0.3s, transform 0.3s;
     position: relative; /* Position for gradient overlay */
     overflow: hidden; /* Ensure gradient doesn't overflow */
+    text-decoration: none; /* Remove underline from links */
+}
+
+.grid-item:hover {
+    background-color: #333333; /* Darker background on hover */
+    transform: scale(1.05);
+    z-index: 2; /* Ensure hovered item is on top */
 }
 
 .grid-item::before {

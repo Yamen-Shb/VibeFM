@@ -61,7 +61,31 @@ def app_route():
     # Retrieve the username from the session
     name = session.get('name')
 
-    return render_template('app.html', name=name)
+    return render_template('dashboard.html', name=name)
+
+
+@app.route('/top-tracks')
+def top_tracks():
+    # Call the backend to get top tracks
+    return render_template('top_tracks.html')
+
+
+@app.route('/top-artists')
+def top_artists():
+    # Call the backend to get top artists
+    return render_template('top_artists.html')
+
+
+@app.route('/generate-songs')
+def generate_songs():
+    # Call the backend to generate songs
+    return render_template('generate_songs.html')
+
+
+@app.route('/sort-songs')
+def sort_songs():
+    # Call the backend to sort songs
+    return render_template('sort_songs.html')
 
 
 @app.route('/logout')
