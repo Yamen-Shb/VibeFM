@@ -270,8 +270,191 @@ main {
     border-radius: 15px;
 }
 
-/* Media queries for responsive design */
+.generate-songs-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab-bar {
+    position: relative;
+    height: 40px;
+    width: 100%;
+    background-color: #282828;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.tab-button {
+    flex: 1;
+    height: 100%;
+    cursor: pointer;
+    padding: 0 20px;
+    background-color: transparent;
+    border: none;
+    outline: none !important;
+    color: #ffffff;
+    transition: background-color 0.3s, color 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.tab-button:focus,
+.tab-button:hover {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.tab-button.active {
+    background-color: #1db954;
+    z-index: 2;
+}
+
+.tab-button:hover {
+    background-color: #1db954;
+    color: white;
+}
+
+form {
+    background-color: #282828;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #b3b3b3;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 92%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    width: 95.5%;
+}
+
+input[type="number"]::placeholder {
+    color: #888;
+    opacity: 1; /* Firefox */
+    font-style: italic;
+}
+
+/* For older browsers */
+input[type="number"]::-webkit-input-placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+input[type="number"]::-moz-placeholder {
+    color: #888;
+    opacity: 1;
+    font-style: italic;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.info-tooltip {
+    margin-left: 10px;
+    cursor: help;
+    font-size: 18px;
+}
+
+.info-tooltip:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+#generate-songs-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #1db954;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#generate-songs-button:hover {
+    background-color: #1ed760;
+}
+
+#results {
+    margin-top: 30px;
+    background-color: #282828;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#results h2 {
+    color: #1db954;
+    margin-top: 0;
+}
+
+#generated-songs-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#generated-songs-list li {
+    background-color: #333;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Media queries for responsive design */
 @media (max-width: 768px) {
     .tab-bar {
         width: 47%;

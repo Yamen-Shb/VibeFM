@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Songs - VibeFM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main_styles.css') }}">
+</head>
+<body>
+    <header>
+        <a class="back-button" href="/app">Back to Dashboard</a>
+        <a class="logout-button" href="/logout">Logout</a>
+    </header>
+    <main>
+        <h1>Generate Songs</h1>
+        
+        <div class="generate-songs-container">
+            <div class="tabs">
+                <div class="tab-bar">
+                    <button class="tab-button active" data-tab="song-seed">Song Seed</button>
+                    <button class="tab-button" data-tab="playlist-seed">Playlist Seed</button>
+                </div>
+            </div>
+
+            <form id="generate-songs-form">
+                <div id="song-seed-input" class="form-group">
+                    <label for="seed-song">Seed Song:</label>
+                    <input type="text" id="seed-song" placeholder="Enter a song name...">
+                </div>
+
+                <div id="playlist-seed-input" class="form-group" style="display: none;">
+                    <label for="seed-playlist">Seed Playlist:</label>
+                    <select id="seed-playlist">
+                        <option value="">Select a playlist...</option>
+                        <!-- Playlist options will be populated dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="number-of-songs">Number of Songs:</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="number-of-songs" placeholder="How ambitious are we feeling?" min="1">
+                        <span class="info-tooltip" title="We'll try our best, but after around 150 songs, even our algorithm gets a bit winded!">ℹ️</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="playlist-name">New Playlist Name:</label>
+                    <input type="text" id="playlist-name" placeholder="Enter playlist name...">
+                </div>
+
+                <button type="submit" id="generate-songs-button">Generate Playlist</button>
+            </form>
+
+            <div id="results" class="hidden">
+                <h2>Generated Playlist</h2>
+                <ul id="generated-songs-list"></ul>
+            </div>
+        </div>
+    </main>    
+    <script src="{{ url_for('static', filename='scripts/generate_songs.js') }}"></script>
+</body>
+</html>
