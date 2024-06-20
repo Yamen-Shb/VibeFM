@@ -270,6 +270,7 @@ main {
     border-radius: 15px;
 }
 
+/*Generate songs styles*/
 .generate-songs-container {
     max-width: 600px;
     margin: 0 auto;
@@ -392,20 +393,7 @@ input[type="number"]::-moz-placeholder {
     margin-left: 10px;
     cursor: help;
     font-size: 18px;
-}
-
-.info-tooltip:hover::after {
-    content: attr(title);
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: #333;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
-    white-space: nowrap;
-    z-index: 1;
+    position: relative;
 }
 
 #generate-songs-button {
