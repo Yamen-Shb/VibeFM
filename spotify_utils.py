@@ -38,12 +38,12 @@ def searchForSong(sp, query):
         # Extract the URI of the first track if results are found
         if 'tracks' in results and 'items' in results['tracks'] and results['tracks']['items']:
             firstTrackURI = results['tracks']['items'][0]['uri']
-            return firstTrackURI
+            return {'song_uris': [firstTrackURI]}
         else:
-            return None
+            return {'error': 'No tracks found'}
     except Exception as e:
-        print(f"Error during song search: {e}")
-        return None
+        print(f"Error in searchForSong: {e}")
+        return {'error': str(e)}
 
 
 def currentlyPlayingTrack(sp):

@@ -1,9 +1,7 @@
 import spotify_utils
 import time
 
-def createPlaylist(sp):
-    # Define the name and description for your new playlist
-    playlistName = input('Your Playlist Name: ')
+def createPlaylist(sp, playlistName):
     playlistDescription = "Created by VibeFM :)"
 
     # Get the current user's username (ID)
@@ -83,22 +81,25 @@ def getPlaylistSongURIs(sp, playlistURI):
     limit = 100  # Maximum limit for fetching songs
     song_uris_in_playlist = []
 
-    while True:
-        # Fetch a batch of songs (up to the API limit)
-        results = sp.playlist_items(playlistURI, offset=offset, limit=limit)
+    try:
+        while True:
+            # Fetch a batch of songs (up to the API limit)
+            results = sp.playlist_items(playlistURI, offset=offset, limit=limit)
 
-        if not results['items']:
-            break  # No more songs to fetch
+            if not results['items']:
+                break  # No more songs to fetch
 
-        # Extract song URIs from the batch and add them to the list
-        batch_uris = [item['track']['uri'] for item in results['items']]
-        song_uris_in_playlist.extend(batch_uris)
+            # Extract song URIs from the batch and add them to the list
+            batch_uris = [item['track']['uri'] for item in results['items'] if item['track'] is not None]
+            song_uris_in_playlist.extend(batch_uris)
 
-        # Update the offset for the next batch
-        offset += limit
+            # Update the offset for the next batch
+            offset += limit
 
-    print(f"Found {len(song_uris_in_playlist)} songs in the playlist.")
-    return song_uris_in_playlist
+        return {'song_uris': song_uris_in_playlist}
+    except Exception as e:
+        print(f"Error fetching playlist songs: {e}")
+        return {'error': str(e)}
 
 
 def sortSongs(sp, artistCache, username):

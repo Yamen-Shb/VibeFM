@@ -4,6 +4,9 @@ import spotipy
 from flask import Flask, render_template, request, redirect, session, jsonify
 import user_authentication
 import user_stats
+import spotify_utils
+import recommend_songs
+import playlist_manager
 
 # Define a cache to store artist information and genres
 artistCache = {}
@@ -104,6 +107,85 @@ def get_top_artists(time_range):
 def generate_songs():
     # Call the backend to generate songs
     return render_template('generate_songs.html')
+
+
+@app.route('/search_song', methods=['POST'])
+def search_song():
+    print("Received search_song request")
+    access_token = session.get('access_token')
+    if access_token is None:
+        print("No access token")
+        return jsonify({"error": "User not authenticated"}), 401
+
+    sp = spotipy.Spotify(auth=access_token)
+    data = request.json
+    query = data.get('query')
+    print(f"Searching for query: {query}")
+
+    if not query:
+        print("No query provided")
+        return jsonify({"error": "Missing query"}), 400
+
+    result = spotify_utils.searchForSong(sp, query)
+    print(f"Search result: {result}")
+    return jsonify(result)
+
+
+@app.route('/get_user_playlists')
+def get_user_playlists():
+    access_token = session.get('access_token')
+    if access_token is None:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    sp = spotipy.Spotify(auth=access_token)
+    playlists = sp.current_user_playlists()
+    
+    playlist_data = [{"name": playlist['name'], "uri": playlist['uri']} for playlist in playlists['items']]
+    return jsonify(playlist_data)
+
+
+@app.route('/get_playlist_songs', methods=['POST'])
+def get_playlist_songs():
+    access_token = session.get('access_token')
+    if access_token is None:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    sp = spotipy.Spotify(auth=access_token)
+    data = request.json
+    playlistURI = data.get('playlist_uri')
+
+    if not playlistURI:
+        return jsonify({"error": "Missing playlist URI"}), 400
+
+    result = playlist_manager.getPlaylistSongURIs(sp, playlistURI)
+    return jsonify(result)
+
+@app.route('/generate_playlist', methods=['POST'])
+def generate_playlist():
+    print("Received generate_playlist request")
+    access_token = session.get('access_token')
+    if access_token is None:
+        print("No access token")
+        return jsonify({"error": "User not authenticated"}), 401
+
+    sp = spotipy.Spotify(auth=access_token)
+    data = request.json
+    print(f"Received data: {data}")
+    songURIs = data.get('song_uris')
+    numOfSongs = int(data.get('num_of_songs'))
+    playlistName = data.get('playlist_name')
+
+    print(f"songURIs: {songURIs}")
+    print(f"numOfSongs: {numOfSongs}")
+    print(f"playlistName: {playlistName}")
+
+    if not songURIs or not numOfSongs or not playlistName:
+        print("Missing parameters")
+        return jsonify({"error": "Missing parameters"}), 400
+
+    result = recommend_songs.recommendBasedOnSeed(sp, songURIs, numOfSongs, playlistName)
+    print(f"Recommendation result: {result}")
+    return jsonify(result)
 
 
 @app.route('/sort-songs')

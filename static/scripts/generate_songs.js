@@ -2,9 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabButtons = document.querySelectorAll('.tab-button');
     const songSeedInput = document.getElementById('song-seed-input');
     const playlistSeedInput = document.getElementById('playlist-seed-input');
-    const form = document.getElementById('generate-songs-form');
 
-    // Tab switching
     tabButtons.forEach(button => {
         button.addEventListener('click', function() {
             tabButtons.forEach(btn => btn.classList.remove('active'));
@@ -20,39 +18,113 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const seedType = document.querySelector('.tab-button.active').dataset.tab;
-        const numberOfSongs = document.getElementById('number-of-songs').value;
-        const newPlaylistName = document.getElementById('playlist-name').value;
-        
-        let seedValue;
-        if (seedType === 'song-seed') {
-            seedValue = document.getElementById('seed-song').value;
-        } else {
-            seedValue = document.getElementById('seed-playlist').value;
-        }
+    populatePlaylistDropdown();
+});
 
-        // Here you would call your API to generate the playlist
-        console.log('Generating playlist with:', {
-            seedType,
-            seedValue,
-            numberOfSongs,
-            newPlaylistName
+async function populatePlaylistDropdown() {
+    try {
+        const response = await fetch('/get_user_playlists');
+        const playlists = await response.json();
+        
+        const playlistSelect = document.getElementById('seed-playlist');
+        playlists.forEach(playlist => {
+            const option = document.createElement('option');
+            option.value = playlist.uri;
+            option.textContent = playlist.name;
+            playlistSelect.appendChild(option);
         });
+    } catch (error) {
+        console.error('Error populating playlist dropdown:', error);
+    }
+}
 
-        // After successful generation, you can show the results
-        // document.getElementById('results').classList.remove('hidden');
-        // Populate the generated-songs-list
-    });
+document.getElementById('generate-songs-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-    // You'll need to populate the playlist select options when the page loads
-    // This would typically involve fetching the user's playlists from your backend
-    function populatePlaylistOptions() {
-        // Fetch playlists and populate the select element
+    const activeTab = document.querySelector('.tab-button.active').dataset.tab;
+    const seedValue = activeTab === 'song-seed' 
+        ? document.getElementById('seed-song').value 
+        : document.getElementById('seed-playlist').value;
+    const numOfSongs = document.getElementById('number-of-songs').value;
+    const playlistName = document.getElementById('playlist-name').value;
+
+    if (!seedValue || !numOfSongs || !playlistName) {
+        alert("Please fill in all fields.");
+        return;
     }
 
-    populatePlaylistOptions();
+    let songURIs;
+
+    if (activeTab === 'song-seed') {
+        console.log('Searching for song:', seedValue);
+        const response = await fetch('/search_song', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query: seedValue })
+        });
+        const result = await response.json();
+        console.log('Search result:', result);
+        if (result.error) {
+            alert(result.error);
+            return;
+        }
+        songURIs = result.song_uris;
+    } else {
+        const response = await fetch('/get_playlist_songs', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ playlist_uri: seedValue })
+        });
+        const result = await response.json();
+        if (result.error) {
+            alert(result.error);
+            return;
+        }
+        songURIs = result.song_uris;
+    }
+
+    console.log('Song URIs:', songURIs);
+
+    if (!songURIs || songURIs.length === 0) {
+        alert("No songs found. Please try a different seed.");
+        return;
+    }
+
+    console.log('Sending to /generate_playlist:', {
+        song_uris: songURIs,
+        num_of_songs: numOfSongs,
+        playlist_name: playlistName
+    });
+    
+    const response = await fetch('/generate_playlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            song_uris: songURIs,
+            num_of_songs: numOfSongs,
+            playlist_name: playlistName
+        })
+    });
+
+    const result = await response.json();
+    if (result.error) {
+        alert(result.error);
+    } else {
+        alert(`Playlist created successfully! Playlist ID: ${result.playlist_id}`);
+        // Optionally, display the generated songs
+        const generatedSongsList = document.getElementById('generated-songs-list');
+        generatedSongsList.innerHTML = '';
+        result.track_uris.forEach(uri => {
+            const li = document.createElement('li');
+            li.textContent = uri;
+            generatedSongsList.appendChild(li);
+        });
+        document.getElementById('results').classList.remove('hidden');
+    }
 });
