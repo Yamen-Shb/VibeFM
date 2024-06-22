@@ -47,7 +47,9 @@ def fetchRecommendations(sp, audioFeature, numOfSongs, songURIs):
         if len(generatedTracks) >= numOfSongs:
             break
         
-        limit = min(numOfSongs - len(generatedTracks), 100)
+        remaining = numOfSongs - len(generatedTracks)
+        limit = min(remaining + len(usedURIs), 100)  # Increase limit to account for filtered songs
+        
         recommendations = sp.recommendations(
             seed_tracks=usedURIs,
             target_acousticness=audioFeature['acousticness'],
@@ -67,4 +69,4 @@ def fetchRecommendations(sp, audioFeature, numOfSongs, songURIs):
         if len(songURIs) > 5:
             usedURIs = random.sample(songURIs, 5)
     
-    return generatedTracks[:numOfSongs]  # Ensure we return exactly numOfSongs tracks
+    return generatedTracks[:numOfSongs]

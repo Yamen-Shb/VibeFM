@@ -138,10 +138,16 @@ function displayPlaylistInfo(playlistData) {
         console.error('Element with id "playlist-cover" not found');
     }
 
-    playlistNameElement.textContent = playlistData.name;    
+    if (playlistNameElement) {
+        playlistNameElement.textContent = playlistData.name;
+    } else {
+        console.error('Element with id "playlist-name-display" not found');
+    }
 
     if (songCountElement) {
-        songCountElement.textContent = `${playlistData.songCount} songs`;
+        const songCount = playlistData.songCount || playlistData.track_uris?.length || 0;
+        console.log(`Song count is: ${songCount}`);
+        songCountElement.textContent = `${songCount} songs`;
     } else {
         console.error('Element with id "song-count" not found');
     }
