@@ -37,38 +37,34 @@ def recommendBasedOnSeed(sp, songURIs, numOfSongs, playlistName):
 def fetchRecommendations(sp, audioFeature, numOfSongs, songURIs):
     if len(songURIs) <= 5:
         usedURIs = songURIs
-    else :
+    else:
         usedURIs = random.sample(songURIs, 5)
     
     generatedTracks = []
-    numOfTracksToGenerate = numOfSongs
-
-    while len(generatedTracks) < numOfSongs:
-        limit = min(numOfTracksToGenerate, 100)
-
-        recommendations = sp.recommendations(seed_tracks=usedURIs,
-                                             target_acousticness=audioFeature['acousticness'],
-                                             target_danceability=audioFeature['danceability'],
-                                             target_energy=audioFeature['energy'],
-                                             target_valence=audioFeature['valence'],
-                                             target_tempo=audioFeature['tempo'],
-                                             limit=limit)
-
+    maxAttempts = 10  # Maximum number of attempts to reach the desired number of songs
+    
+    for _ in range(maxAttempts):
+        if len(generatedTracks) >= numOfSongs:
+            break
+        
+        limit = min(numOfSongs - len(generatedTracks), 100)
+        recommendations = sp.recommendations(
+            seed_tracks=usedURIs,
+            target_acousticness=audioFeature['acousticness'],
+            target_danceability=audioFeature['danceability'],
+            target_energy=audioFeature['energy'],
+            target_valence=audioFeature['valence'],
+            target_tempo=audioFeature['tempo'],
+            limit=limit
+        )
+        
         newTracks = [track for track in recommendations['tracks'] 
-             if track['uri'] not in songURIs 
-             and track['uri'] not in [t['uri'] for t in generatedTracks]]
+                     if track['uri'] not in songURIs and 
+                     track['uri'] not in [t['uri'] for t in generatedTracks]]
         
         generatedTracks.extend(newTracks)
         
-        # Update the number of tracks to generate in the next loop iteration
-        numOfTracksToGenerate = numOfSongs - len(generatedTracks)
-
-        # Break the loop if no new tracks were added to avoid infinite loop
-        if not newTracks:
-            break
-
-        # Adjust the seed tracks slightly to reduce overlap
         if len(songURIs) > 5:
             usedURIs = random.sample(songURIs, 5)
-
-    return generatedTracks
+    
+    return generatedTracks[:numOfSongs]  # Ensure we return exactly numOfSongs tracks

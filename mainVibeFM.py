@@ -111,23 +111,18 @@ def generate_songs():
 
 @app.route('/search_song', methods=['POST'])
 def search_song():
-    print("Received search_song request")
     access_token = session.get('access_token')
     if access_token is None:
-        print("No access token")
         return jsonify({"error": "User not authenticated"}), 401
 
     sp = spotipy.Spotify(auth=access_token)
     data = request.json
     query = data.get('query')
-    print(f"Searching for query: {query}")
 
     if not query:
-        print("No query provided")
         return jsonify({"error": "Missing query"}), 400
 
     result = spotify_utils.searchForSong(sp, query)
-    print(f"Search result: {result}")
     return jsonify(result)
 
 
@@ -162,29 +157,32 @@ def get_playlist_songs():
 
 @app.route('/generate_playlist', methods=['POST'])
 def generate_playlist():
-    print("Received generate_playlist request")
     access_token = session.get('access_token')
     if access_token is None:
-        print("No access token")
         return jsonify({"error": "User not authenticated"}), 401
 
     sp = spotipy.Spotify(auth=access_token)
     data = request.json
-    print(f"Received data: {data}")
     songURIs = data.get('song_uris')
     numOfSongs = int(data.get('num_of_songs'))
     playlistName = data.get('playlist_name')
 
-    print(f"songURIs: {songURIs}")
-    print(f"numOfSongs: {numOfSongs}")
-    print(f"playlistName: {playlistName}")
 
     if not songURIs or not numOfSongs or not playlistName:
-        print("Missing parameters")
         return jsonify({"error": "Missing parameters"}), 400
 
     result = recommend_songs.recommendBasedOnSeed(sp, songURIs, numOfSongs, playlistName)
-    print(f"Recommendation result: {result}")
+    
+    if 'error' in result:
+        return jsonify(result), 500
+
+    # Retrieve the cover image URL of the created playlist
+    playlist_id = result.get('playlist_id')
+    if playlist_id:
+        playlist = sp.playlist(playlist_id)
+        cover_url = playlist['images'][0]['url'] if playlist['images'] else None
+        result['coverUrl'] = cover_url
+
     return jsonify(result)
 
 

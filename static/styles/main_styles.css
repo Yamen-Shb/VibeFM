@@ -426,20 +426,36 @@ input[type="number"]::-moz-placeholder {
     margin-top: 0;
 }
 
-#generated-songs-list {
-    list-style-type: none;
-    padding: 0;
-}
-
-#generated-songs-list li {
-    background-color: #333;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
 .hidden {
     display: none;
+}
+
+#playlist-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#playlist-cover {
+    width: 100%;
+    max-width: 300px; /* Adjust this value as needed */
+    height: auto;
+    border-radius: 15px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+#playlist-name-display {
+    color: #ffffff;
+    font-size: 1.5em;
+    margin: 10px 0 5px;
+}
+
+#song-count {
+    font-size: 1.2em;
+    color: #b3b3b3;
 }
 
 /* Media queries for responsive design */

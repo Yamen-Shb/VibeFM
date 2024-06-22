@@ -15,66 +15,6 @@ def createPlaylist(sp, playlistName):
     return playlistID
 
 
-def printPlaylists(playlists):
-    print("Your playlists:")
-    for index, playlist in enumerate(playlists):
-        if 'name' in playlist:
-            playlist_name = playlist['name']
-            encoding = spotify_utils.detect_encoding(playlist_name)
-            try:
-                display_name = playlist_name.encode(encoding).decode('utf-8', 'replace')
-            except UnicodeEncodeError:
-                display_name = playlist_name.encode('latin-1', 'replace').decode('latin-1')
-            print(f"{index + 1}. {display_name}")
-        else:
-            print(f"{index + 1}. [Playlist Name Not Found]")
-
-
-def choosePlaylist(sp):
-    # Set the limit to the number of playlists you want to fetch per request
-    limit = 50
-
-    # List to store all fetched playlists
-    allPlaylists = []
-
-    # Fetch playlists in batches
-    while True:
-        playlistsBatch = sp.current_user_playlists(offset=len(allPlaylists), limit=limit)['items']
-        allPlaylists.extend(playlistsBatch)
-
-        # No more playlists to fetch
-        if len(playlistsBatch) < limit:
-            break
-
-    # Display all fetched playlists
-    printPlaylists(allPlaylists)
-
-    # Get user input for the selected playlist
-    while True:
-        playlistIndex = input("Please enter the number of the playlist: ")
-
-        try:
-            playlistIndex = int(playlistIndex)
-
-            # Validate the entered playlist number
-            if 1 <= playlistIndex <= len(allPlaylists):
-                playlistName = allPlaylists[playlistIndex - 1]['name']
-                playlistID = spotify_utils.getPlaylistID(sp, playlistName)
-
-                # Check if playlist_id is successfully retrieved
-                if playlistID:
-                    print(f"Selected playlist ID: {playlistID}")
-                    break
-                else:
-                    print("Failed to retrieve playlist ID. Please try again.")
-            else:
-                print("Invalid playlist number. Please try again.")
-        except ValueError:
-            print("Invalid input. Please enter a valid number.")
-
-    return playlistID
-
-
 def getPlaylistSongURIs(sp, playlistURI):
     # Initialize some variables
     offset = 0
@@ -242,12 +182,10 @@ def addSongsToPlaylist(sp, playlistID, songURIs):
                 iterationCount += 1
                 subsetOfSongsToAdd = songURIs[0:100]
                 sp.playlist_add_items(playlistID, subsetOfSongsToAdd)
-                print("this is batch #" + str(iterationCount))
                 del songURIs[0:100]
             elif 100 >= len(songURIs) > 0:
                 sp.playlist_add_items(playlistID, songURIs)
                 iterationCount += 1
-                print("this is the last batch, batch #" + str(iterationCount))
                 break
             if len(songURIs) == 0:
                 break
@@ -263,18 +201,13 @@ def addSongsToPlaylist(sp, playlistID, songURIs):
                 for song_uri in subsetOfSongsToCheck:
                     if song_uri not in URIsInPlaylistSet:
                         nonMatchingSongsToAdd.append(song_uri)
-
-                print("this is batch #" + str(iterationCount) + ", there are " + str(
-                    len(nonMatchingSongsToAdd)) + " songs to add")
-
+                        
             elif 100 >= len(songURIs) > 0:
                 iterationCount += 1
                 for song_uri in songURIs:
                     if song_uri not in URIsInPlaylistSet:
                         nonMatchingSongsToAdd.append(song_uri)
 
-                print("this is the last batch, batch #" + str(iterationCount) + ", there are " + str(
-                    len(nonMatchingSongsToAdd)) + " songs to add")
                 break
 
     if nonMatchingSongsToAdd:

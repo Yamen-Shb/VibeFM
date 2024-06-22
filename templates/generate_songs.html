@@ -32,7 +32,6 @@
                     <label for="seed-playlist">Seed Playlist:</label>
                     <select id="seed-playlist">
                         <option value="">Select a playlist...</option>
-                        <!-- Playlist options will be populated dynamically -->
                     </select>
                 </div>
 
@@ -40,13 +39,13 @@
                     <label for="number-of-songs">Number of Songs:</label>
                     <div class="input-wrapper">
                         <input type="number" id="number-of-songs" placeholder="How ambitious are we feeling?" min="1">
-                        <span class="info-tooltip" title="We'll try our best, but after around 150 songs, even our algorithm gets a bit winded!">ℹ️</span>
+                        <span class="info-tooltip" title="We'll try our best, but after around 100 songs, even our algorithm gets a bit winded!">ℹ️</span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="playlist-name">New Playlist Name:</label>
-                    <input type="text" id="playlist-name" placeholder="Enter playlist name...">
+                    <input type="text" id="playlist-name-input" placeholder="Enter playlist name...">
                 </div>
 
                 <button type="submit" id="generate-songs-button">Generate Playlist</button>
@@ -54,7 +53,11 @@
 
             <div id="results" class="hidden">
                 <h2>Generated Playlist</h2>
-                <ul id="generated-songs-list"></ul>
+                <div id="playlist-info">
+                    <img id="playlist-cover" src="" alt="Playlist Cover">
+                    <h3 id="playlist-name-display"></h3>
+                    <p id="song-count"></p>
+                </div>
             </div>
         </div>
     </main>    

@@ -46,7 +46,7 @@ document.getElementById('generate-songs-form').addEventListener('submit', async 
         ? document.getElementById('seed-song').value 
         : document.getElementById('seed-playlist').value;
     const numOfSongs = document.getElementById('number-of-songs').value;
-    const playlistName = document.getElementById('playlist-name').value;
+    const playlistName = document.getElementById('playlist-name-input').value;
 
     if (!seedValue || !numOfSongs || !playlistName) {
         alert("Please fill in all fields.");
@@ -56,7 +56,6 @@ document.getElementById('generate-songs-form').addEventListener('submit', async 
     let songURIs;
 
     if (activeTab === 'song-seed') {
-        console.log('Searching for song:', seedValue);
         const response = await fetch('/search_song', {
             method: 'POST',
             headers: {
@@ -65,7 +64,6 @@ document.getElementById('generate-songs-form').addEventListener('submit', async 
             body: JSON.stringify({ query: seedValue })
         });
         const result = await response.json();
-        console.log('Search result:', result);
         if (result.error) {
             alert(result.error);
             return;
@@ -87,18 +85,10 @@ document.getElementById('generate-songs-form').addEventListener('submit', async 
         songURIs = result.song_uris;
     }
 
-    console.log('Song URIs:', songURIs);
-
     if (!songURIs || songURIs.length === 0) {
         alert("No songs found. Please try a different seed.");
         return;
     }
-
-    console.log('Sending to /generate_playlist:', {
-        song_uris: songURIs,
-        num_of_songs: numOfSongs,
-        playlist_name: playlistName
-    });
     
     const response = await fetch('/generate_playlist', {
         method: 'POST',
@@ -113,18 +103,54 @@ document.getElementById('generate-songs-form').addEventListener('submit', async 
     });
 
     const result = await response.json();
+    
     if (result.error) {
         alert(result.error);
     } else {
-        alert(`Playlist created successfully! Playlist ID: ${result.playlist_id}`);
-        // Optionally, display the generated songs
-        const generatedSongsList = document.getElementById('generated-songs-list');
-        generatedSongsList.innerHTML = '';
-        result.track_uris.forEach(uri => {
-            const li = document.createElement('li');
-            li.textContent = uri;
-            generatedSongsList.appendChild(li);
+        alert(`Playlist created successfully! Playlist Name: ${result.playlistName || playlistName}`);
+
+        displayPlaylistInfo({
+            coverUrl: result.coverUrl, 
+            name: result.playlistName || playlistName,
+            songCount: result.track_uris.length
         });
-        document.getElementById('results').classList.remove('hidden');
+
+        const resultsElement = document.getElementById('results');
+        if (resultsElement) {
+            resultsElement.classList.remove('hidden');
+            resultsElement.classList.add('visible');
+        } else {
+            console.error('Element with id "results" not found');
+        }
     }
 });
+
+function displayPlaylistInfo(playlistData) {
+    console.log('Displaying playlist info:', playlistData);
+    
+    const playlistCover = document.getElementById('playlist-cover');
+    const playlistNameElement = document.getElementById('playlist-name-display');
+    const songCountElement = document.getElementById('song-count');
+
+    if (playlistCover) {
+        playlistCover.src = playlistData.coverUrl || '';
+    } else {
+        console.error('Element with id "playlist-cover" not found');
+    }
+
+    playlistNameElement.textContent = playlistData.name;    
+
+    if (songCountElement) {
+        songCountElement.textContent = `${playlistData.songCount} songs`;
+    } else {
+        console.error('Element with id "song-count" not found');
+    }
+
+    const resultsElement = document.getElementById('results');
+    if (resultsElement) {
+        resultsElement.classList.remove('hidden');
+        resultsElement.classList.add('visible');
+    } else {
+        console.error('Element with id "results" not found');
+    }
+}
