@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sort Songs - VibeFM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main_styles.css') }}">
+</head>
+<body>
+    <header>
+        <a class="back-button" href="/app">Back to Dashboard</a>
+        <a class="logout-button" href="/logout">Logout</a>
+    </header>
+    <main>
+        <h1>Sort Songs</h1>
+        
+        <div class="sort-songs-container">
+            <div class="tabs">
+                <div class="tab-bar">
+                    <button class="tab-button active" data-tab="liked-songs">Liked Songs</button>
+                    <button class="tab-button" data-tab="saved-playlist">Saved Playlist</button>
+                </div>
+            </div>
+
+            <form id="sort-songs-form">
+                <div id="liked-songs-input" class="form-group">
+                    <label for="liked-songs-limit">Number of Liked Songs to Check:</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="liked-songs-limit" placeholder="How many liked songs to check?" min="1">
+                    </div>
+                </div>
+
+                <div id="saved-playlist-input" class="form-group" style="display: none;">
+                    <label for="saved-playlist-select">Saved Playlist:</label>
+                    <select id="saved-playlist-select">
+                        <option value="">Select a playlist...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="target-genre">Target Genre:</label>
+                    <input type="text" id="target-genre" placeholder="Enter target genre...">
+                </div>
+
+                <div class="form-group">
+                    <label for="playlist-name">New Playlist Name:</label>
+                    <input type="text" id="playlist-name-input" placeholder="Enter playlist name...">
+                </div>
+
+                <button type="submit" id="sort-songs-button">Sort Songs</button>
+            </form>
+
+            <div id="results" class="hidden">
+                <h2>Generated Playlist</h2>
+                <div id="playlist-info">
+                    <img id="playlist-cover" src="" alt="Playlist Cover">
+                    <h3 id="playlist-name-display"></h3>
+                    <p id="song-count"></p>
+                </div>
+            </div>
+        </div>
+    </main>    
+    <script src="{{ url_for('static', filename='scripts/sort_songs.js') }}"></script>
+</body>
+</html>

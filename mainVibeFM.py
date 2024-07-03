@@ -7,12 +7,11 @@ import user_stats
 import spotify_utils
 import recommend_songs
 import playlist_manager
-
-# Define a cache to store artist information and genres
-artistCache = {}
+import f_testing
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
+
 
 @app.route('/')
 def home():
@@ -99,6 +98,8 @@ def get_top_artists(time_range):
 
     sp = spotipy.Spotify(auth=access_token)
     artists = user_stats.getTopArtists(sp, time_range)
+    
+    f_testing.printGenres(sp)
 
     return jsonify(artists)
 
@@ -191,6 +192,46 @@ def sort_songs():
     # Call the backend to sort songs
     return render_template('sort_songs.html')
 
+
+@app.route('/sort_songs_action', methods=['POST'])
+def sort_songs_action():
+    access_token = session.get('access_token')
+    if access_token is None:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    sp = spotipy.Spotify(auth=access_token)
+    data = request.json
+    choice = data.get('choice')  # 'liked' or 'playlist'
+    target_genre = data.get('targetGenre')
+    playlist_name = data.get('playlistName')
+    max_tracks = data.get('maxTracks')
+
+    if not choice or not target_genre or not playlist_name:
+        return jsonify({"error": "Missing parameters"}), 400
+
+    result = playlist_manager.sortSongs(sp, choice, target_genre, playlist_name, max_tracks)
+
+    if 'error' in result:
+        return jsonify(result), 500
+
+    # Retrieve the cover image URL of the created playlist
+    playlist_id = result.get('playlist_id')
+    if playlist_id:
+        playlist = sp.playlist(playlist_id)
+        cover_url = playlist['images'][0]['url'] if playlist['images'] else None
+        result['coverUrl'] = cover_url
+
+    return jsonify(result)
+
+
+    # Retrieve the cover image URL of the created playlist
+    playlist_id = result.get('playlist_id')
+    if playlist_id:
+        playlist = sp.playlist(playlist_id)
+        cover_url = playlist['images'][0]['url'] if playlist['images'] else None
+        result['coverUrl'] = cover_url
+
+    return jsonify(result)
 
 @app.route('/logout')
 def logout():

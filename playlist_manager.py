@@ -15,159 +15,90 @@ def createPlaylist(sp, playlistName):
     return playlistID
 
 
-def getPlaylistSongURIs(sp, playlistURI):
-    # Initialize some variables
+def fetchTracks(sp, playlist_id=None, maxTracks=None):
     offset = 0
-    limit = 100  # Maximum limit for fetching songs
-    song_uris_in_playlist = []
+    limit=50
+    allTracks = []
 
+    while True:
+        if playlist_id:
+            results = sp.playlist_items(playlist_id, limit=limit, offset=offset, 
+                                        fields='items(track(name,uri,artists(uri)))')
+        else:
+            results = sp.current_user_saved_tracks(limit=limit, offset=offset)
+
+        if not results['items']:
+            break
+
+        allTracks.extend([item['track'] for item in results['items'] if item['track']])
+
+        if maxTracks and len(allTracks) >= maxTracks:
+            allTracks = allTracks[:maxTracks]
+            break
+
+        offset += limit
+
+    return allTracks
+
+
+def getPlaylistSongURIs(sp, playlistURI):
     try:
-        while True:
-            # Fetch a batch of songs (up to the API limit)
-            results = sp.playlist_items(playlistURI, offset=offset, limit=limit)
-
-            if not results['items']:
-                break  # No more songs to fetch
-
-            # Extract song URIs from the batch and add them to the list
-            batch_uris = [item['track']['uri'] for item in results['items'] if item['track'] is not None]
-            song_uris_in_playlist.extend(batch_uris)
-
-            # Update the offset for the next batch
-            offset += limit
-
-        return {'song_uris': song_uris_in_playlist}
+        tracks = fetchTracks(sp, playlist_id=playlistURI, maxTracks=None)
+        songURIsInPlaylist = [track['uri'] for track in tracks if track is not None]
+        return {'song_uris': songURIsInPlaylist}
     except Exception as e:
         print(f"Error fetching playlist songs: {e}")
         return {'error': str(e)}
 
 
-def sortSongs(sp, artistCache, username):
+def sortSongs(sp, choice, targetGenre, playlistName, maxTracks=None):
     offset = 0
-    limit = 50  # Set an initial limit for pagination
-    counter = 0
-    reachedSongNumber = True
-    likedTracks = []
+    limit = 50
     matchingTracks = []
-    numberOfTracksToCheck = 0
+    artistCache = {}
 
-    # List of genres
-    existingGenres = ["rock", "pop", "hip-hop", "jazz", "indie", "rap", "r&b", "arab", "phonk"]
-
-    choice = input("Enter your choice (1 for playlist, 2 for liked songs): ")
-
-    if choice == '1':
-        while True:
-            playlist_id = choosePlaylist(sp)
-            if playlist_id:
-                print(f"Selected playlist ID: {playlist_id}")
-                break
-            else:
-                print("Playlist not found, please try again.")
-
-    else:
-        playlist_id = None  # Indicates that we're getting liked songs
-
-        numberOfTracksToCheckInput = input(
-            "Please input the number of songs you want to sort through (0 if all liked songs): ")
-        numberOfTracksToCheck = int(numberOfTracksToCheckInput)
-
-        while numberOfTracksToCheck < 0:
-            numberOfTracksToCheckInput = input("Invalid number of songs. Please try again: ")
-            numberOfTracksToCheck = int(numberOfTracksToCheckInput)
-
-    target_genre = input("Please input your target genre: ")
-
-    while target_genre not in existingGenres:
-        print("Genre does not exist, please enter an existing genre!")
-        target_genre = input("Please input your target genre: ")
+    validGenres = set(g.lower() for g in sp.recommendation_genre_seeds())
+    if targetGenre.lower() not in validGenres:
+        return {"error": "Invalid genre"}
 
     while True:
-        results = sp.playlist_items(playlist_id, limit=limit, offset=offset) if playlist_id else sp.current_user_saved_tracks(limit=limit, offset=offset)
-
-        if not results['items']:
+        tracks = fetchTracks(sp, choice, maxTracks)
+        
+        if not tracks:
             break
 
-        likedTracks.extend(results['items'])
-
-        if not reachedSongNumber:
-            break
-
-        for trackInfo in results['items']:
-            counter += 1
-            genreMatch = False
-            currentLikedSong = trackInfo['track']
-
-            if counter % 25 == 0:
-                time.sleep(1.2)
-
-            if playlist_id is None:
-                if counter == numberOfTracksToCheck:
-                    reachedSongNumber = False
-                    break
-
-            # Access the list of artists for the current song
-            artists = currentLikedSong['artists']
-
-            # Print the counter once for each song
-            print(counter, end=" ")
-
-            # Print song details only once per song
-            print(f"Song: {currentLikedSong['name']} - Genres: ", end="")
-
-            genres_list = []  # Store genres in a list
-
-            for artist in artists:
+        for track in tracks:
+            for artist in track['artists']:
                 artistURI = artist['uri']
+                
+                if artistURI not in artistCache:
+                    artistDetails = sp.artist(artistURI)
+                    artistCache[artistURI] = artistDetails['genres']
 
-                # Check if artist information is in the cache
-                if artistURI in artistCache:
-                    artistsDetails = artistCache[artistURI]
-                else:
-                    # Make an API call to get artist details
-                    artistsDetails = sp.artist(artistURI)
-                    # Cache the artist information
-                    artistCache[artistURI] = artistsDetails
+                if any(targetGenre.lower() in genre.lower() for genre in artistCache[artistURI]):
+                    matchingTracks.append(track['uri'])
+                    break  # No need to check other artists for this track
+            
+            if maxTracks and len(matchingTracks) >= maxTracks:
+                break
 
-                if 'genres' in artistsDetails:
-                    # Store genres in the list
-                    genres_list.extend(artistsDetails['genres'])
+        if maxTracks and len(matchingTracks) >= maxTracks:
+            break
 
-                    for genre in artistsDetails['genres']:
-                        if target_genre in genre:
-                            matchingTracks.append(currentLikedSong['uri'])
-                            genreMatch = True
-                            break
+        offset += limit
 
-                    # Break out of the loop if genreMatch is True
-                    if genreMatch:
-                        break
+    if not matchingTracks:
+        return {"error": "No matching tracks found"}
 
-            # Print the concatenated genres
-            print(', '.join(genres_list))
+    # Create a new playlist and add songs
+    playlistId = createPlaylist(sp, playlistName)
+    addSongsToPlaylist(sp, playlistId, matchingTracks)
 
-        offset += len(results['items'])  # Update the offset for the next page
-
-    if len(matchingTracks) == 0:
-        print("There are no songs matching this genre in your liked tracks, sorry!")
-        return
-
-    print(f"{len(matchingTracks)} matching tracks")
-    choice = input("Would you like to add these songs to a "
-                   "new playlist or an existing playlist (1 "
-                   "for new 2 for existing): ")
-
-    # Optimize this because entering a number isn't professional
-    # Convert the user's input to an integer
-    choice = int(choice)
-
-    if choice == 1:
-        addSongsToPlaylist(sp, username, createPlaylist(sp), matchingTracks)
-    elif choice == 2:
-        # Optimize this because typing a name to make a choice is terrible
-        playlistURI = choosePlaylist(sp)
-        addSongsToPlaylist(sp, username, playlistURI, matchingTracks)
-
+    return {
+        "success": True,
+        "playlist_id": playlistId,
+        "tracks_added": len(matchingTracks)
+    }
 
 # Comments please, this is so ugly
 def addSongsToPlaylist(sp, playlistID, songURIs):

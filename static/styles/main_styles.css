@@ -413,6 +413,23 @@ input[type="number"]::-moz-placeholder {
     background-color: #1ed760;
 }
 
+#sort-songs-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #1db954;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#sort-songs-button:hover {
+    background-color: #1ed760;
+}
+
 #results {
     margin-top: 30px;
     background-color: #282828;
