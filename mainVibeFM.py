@@ -7,7 +7,6 @@ import user_stats
 import spotify_utils
 import recommend_songs
 import playlist_manager
-import f_testing
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
@@ -98,8 +97,6 @@ def get_top_artists(time_range):
 
     sp = spotipy.Spotify(auth=access_token)
     artists = user_stats.getTopArtists(sp, time_range)
-    
-    f_testing.printGenres(sp)
 
     return jsonify(artists)
 
