@@ -57,10 +57,6 @@ def sortSongs(sp, choice, targetGenre, playlistName, maxTracks=None):
     matchingTracks = []
     artistCache = {}
 
-    validGenres = set(g.lower() for g in sp.recommendation_genre_seeds())
-    if targetGenre.lower() not in validGenres:
-        return {"error": "Invalid genre"}
-
     while True:
         tracks = fetchTracks(sp, choice, maxTracks)
         

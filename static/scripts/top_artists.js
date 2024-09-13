@@ -42,6 +42,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Trigger click on the first button to load initial data
     buttons[0].click();
 });

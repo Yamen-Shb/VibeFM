@@ -26,7 +26,14 @@ def recommendBasedOnSeed(sp, songURIs, numOfSongs, playlistName):
             # Create a new playlist and add the unique tracks to it
             playlistID = playlist_manager.createPlaylist(sp, playlistName)
             playlist_manager.addSongsToPlaylist(sp, playlistID, trackURIs)
-            return {"playlist_id": playlistID, "track_uris": trackURIs}
+            playlist = sp.playlist(playlistID)
+            actualSongCount = playlist['tracks']['total']
+            
+            return {
+                "playlist_id": playlistID, 
+                "track_uris": trackURIs,
+                "actual_song_count": actualSongCount  
+            }
         else:
             return {"error": "No unique tracks to add to the playlist"}
     else:
@@ -40,14 +47,15 @@ def fetchRecommendations(sp, audioFeature, numOfSongs, songURIs):
         usedURIs = random.sample(songURIs, 5)
     
     generatedTracks = []
-    maxAttempts = 10  # Maximum number of attempts to reach the desired number of songs
+    maxAttempts = 20 
+
+    if len(songURIs) == 1:
+        numOfSongs +=1
     
-    for _ in range(maxAttempts):
-        if len(generatedTracks) >= numOfSongs:
-            break
-        
+    
+    while len(generatedTracks) < numOfSongs and maxAttempts > 0:
         remaining = numOfSongs - len(generatedTracks)
-        limit = min(remaining + len(usedURIs), 100)  # Increase limit to account for filtered songs
+        limit = min(remaining, 100)
         
         recommendations = sp.recommendations(
             seed_tracks=usedURIs,
@@ -67,5 +75,7 @@ def fetchRecommendations(sp, audioFeature, numOfSongs, songURIs):
         
         if len(songURIs) > 5:
             usedURIs = random.sample(songURIs, 5)
+        
+        maxAttempts -= 1
     
     return generatedTracks[:numOfSongs]

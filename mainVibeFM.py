@@ -206,7 +206,10 @@ def sort_songs_action():
     if not choice or not target_genre or not playlist_name:
         return jsonify({"error": "Missing parameters"}), 400
 
-    result = playlist_manager.sortSongs(sp, choice, target_genre, playlist_name, max_tracks)
+    try:
+        result = playlist_manager.sortSongs(sp, choice, target_genre, playlist_name, max_tracks)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
     if 'error' in result:
         return jsonify(result), 500
@@ -220,15 +223,6 @@ def sort_songs_action():
 
     return jsonify(result)
 
-
-    # Retrieve the cover image URL of the created playlist
-    playlist_id = result.get('playlist_id')
-    if playlist_id:
-        playlist = sp.playlist(playlist_id)
-        cover_url = playlist['images'][0]['url'] if playlist['images'] else None
-        result['coverUrl'] = cover_url
-
-    return jsonify(result)
 
 @app.route('/logout')
 def logout():

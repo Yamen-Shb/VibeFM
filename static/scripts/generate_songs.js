@@ -112,7 +112,7 @@ document.getElementById('generate-songs-form').addEventListener('submit', async 
         displayPlaylistInfo({
             coverUrl: result.coverUrl, 
             name: result.playlistName || playlistName,
-            songCount: result.track_uris.length
+            songCount: result.actual_song_count
         });
 
         const resultsElement = document.getElementById('results');
@@ -127,6 +127,7 @@ document.getElementById('generate-songs-form').addEventListener('submit', async 
 
 function displayPlaylistInfo(playlistData) {
     console.log('Displaying playlist info:', playlistData);
+    console.log('Song Count Property:', playlistData.songCount);
     
     const playlistCover = document.getElementById('playlist-cover');
     const playlistNameElement = document.getElementById('playlist-name-display');
@@ -145,7 +146,7 @@ function displayPlaylistInfo(playlistData) {
     }
 
     if (songCountElement) {
-        const songCount = playlistData.songCount || playlistData.track_uris?.length || 0;
+        const songCount = playlistData.songCount;
         console.log(`Song count is: ${songCount}`);
         songCountElement.textContent = `${songCount} songs`;
     } else {

@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         const trackImage = document.createElement('img');
                         trackImage.className = 'track-image';
-                        trackImage.src = track.image; // Assuming the track object contains an 'image' key
+                        trackImage.src = track.image;
 
                         imageContainer.appendChild(trackIndex);
                         imageContainer.appendChild(trackImage);
@@ -42,6 +42,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Trigger click on the first button to load initial data
     buttons[0].click();
 });
