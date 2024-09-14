@@ -2,35 +2,27 @@
     "version": 2,
     "builds": [
       {
-        "src": "app.py",
+        "src": "mainVibeFM.py",
         "use": "@vercel/python"
-      },
-      {
-        "src": "static/scripts/**",
-        "use": "@vercel/static"
-      },
-      {
-        "src": "static/styles/**",
-        "use": "@vercel/static"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/static/scripts/(.*)",
-        "dest": "/static/scripts/$1"
-      },
-      {
-        "src": "/static/styles/(.*)",
-        "dest": "/static/styles/$1"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "app.py"
-      }
-    ],
-    "env": {
-      "FLASK_ENV": "production",
-      "FLASK_APP": "app.py"
+    },
+    {
+      "src": "static/**",
+      "use": "@vercel/static"
     }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "mainVibeFM.py"
+    }
+  ],
+  "env": {
+    "FLASK_ENV": "production",
+    "FLASK_APP": "mainVibeFM.py",
+    "SECRET_KEY": "your-secret-key" 
+  }
 }
-  
