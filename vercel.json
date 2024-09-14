@@ -4,9 +4,25 @@
       {
         "src": "app.py",
         "use": "@vercel/python"
+      },
+      {
+        "src": "static/scripts/**",
+        "use": "@vercel/static"
+      },
+      {
+        "src": "static/styles/**",
+        "use": "@vercel/static"
       }
     ],
     "routes": [
+      {
+        "src": "/static/scripts/(.*)",
+        "dest": "/static/scripts/$1"
+      },
+      {
+        "src": "/static/styles/(.*)",
+        "dest": "/static/styles/$1"
+      },
       {
         "src": "/(.*)",
         "dest": "app.py"
@@ -16,4 +32,5 @@
       "FLASK_ENV": "production",
       "FLASK_APP": "app.py"
     }
-  }
+}
+  
