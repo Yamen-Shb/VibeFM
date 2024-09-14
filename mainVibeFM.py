@@ -10,6 +10,7 @@ import playlist_manager
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
+print(f"Secret Key: {app.secret_key}")
 
 
 @app.route('/')
@@ -21,6 +22,12 @@ def login():
     # Redirect the user to the Spotify authentication URL
     auth_url = user_authentication.get_auth_url()
     return redirect(auth_url)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    user_authentication.clear_cache()
+    return redirect('/')
 
 @app.route('/callback')
 def callback():
@@ -222,15 +229,6 @@ def sort_songs_action():
         result['coverUrl'] = cover_url
 
     return jsonify(result)
-
-
-@app.route('/logout')
-def logout():
-    # Clear the session data
-    session.clear()
-    # Clear the Spotify OAuth cache
-    user_authentication.clear_cache()
-    return redirect('/')
 
 
 if __name__ == '__main__':
