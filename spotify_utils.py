@@ -1,7 +1,4 @@
-import os
-import spotipy
 import chardet
-from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
 def getPlaylistID(sp, playlist_name):
     # Set the limit to the number of playlists you want to fetch per request

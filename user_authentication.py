@@ -6,20 +6,20 @@ from spotipy.oauth2 import SpotifyOAuth
 load_dotenv()
 
 # Load environment variables
-client_id = os.getenv("SPOTIPY_CLIENT_ID")
-client_secret = os.getenv("SPOTIPY_CLIENT_SECRET")
-redirect_uri = os.getenv("SPOTIPY_REDIRECT_URI")
+client_id = os.environ.get("SPOTIPY_CLIENT_ID")
+client_secret = os.environ.get("SPOTIPY_CLIENT_SECRET")
+redirect_uri = os.environ.get("SPOTIPY_REDIRECT_URI")
 
 # Load Genius and Last.fm API keys from environment variables
-genius_client_id = os.getenv('GENIUS_CLIENT_ID')
-genius_client_secret = os.getenv('GENIUS_CLIENT_SECRET')
-lastfm_api_key = os.getenv('LASTFM_API_KEY')
+# genius_client_id = os.environ.get('GENIUS_CLIENT_ID')
+# genius_client_secret = os.environ.get('GENIUS_CLIENT_SECRET')
+# lastfm_api_key = os.environ.get('LASTFM_API_KEY')
 
 # Define the Spotify OAuth scope
 scope = 'user-library-read playlist-modify-private user-read-recently-played user-top-read user-read-playback-state user-read-currently-playing playlist-modify-public playlist-modify-private playlist-read-private'
 
 # Set a custom cache path
-cache_path = ".cache"
+cache_path = "/tmp/.cache"  # Use /tmp for Vercel's ephemeral filesystem
 
 # Create the SpotifyOAuth object
 sp_oauth = SpotifyOAuth(
@@ -29,7 +29,7 @@ sp_oauth = SpotifyOAuth(
     scope=scope,
     show_dialog=True,
     cache_path=cache_path,
-    requests_timeout= 30
+    requests_timeout=30
 )
 
 # Function to get the Spotify authorization URL
