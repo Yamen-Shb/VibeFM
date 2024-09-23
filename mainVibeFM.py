@@ -8,10 +8,20 @@ import spotify_utils
 import recommend_songs
 import playlist_manager
 
+load_dotenv()
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
-print(f"Secret Key: {app.secret_key}")
+if not app.secret_key:
+    raise ValueError("No SECRET_KEY set for Flask application")
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'access_token' not in session:
+            return redirect('/login')
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def home():
@@ -19,84 +29,77 @@ def home():
 
 @app.route('/login')
 def login():
+    # Generate a unique state for CSRF protection
+    state = secrets.token_urlsafe(16)
+    session['spotify_auth_state'] = state
+    
     # Redirect the user to the Spotify authentication URL
-    auth_url = user_authentication.get_auth_url()
+    auth_url = user_authentication.get_auth_url(state)
     return redirect(auth_url)
 
 @app.route('/logout')
 def logout():
+    # Clear the session
     session.clear()
+    # Clear any cached tokens
     user_authentication.clear_cache()
     return redirect('/')
 
 @app.route('/callback')
 def callback():
+    # Verify the state to prevent CSRF attacks
+    if request.args.get('state') != session.get('spotify_auth_state'):
+        return 'State mismatch. Possible CSRF attack.', 400
+    
     # Handle the redirect from Spotify after authentication
     code = request.args.get('code')
     token_info = user_authentication.get_tokens(code)
-    access_token = token_info['access_token']
-    refresh_token = token_info.get('refresh_token')
-
+    
+    if not token_info:
+        return 'Failed to get token', 400
+    
     # Store the tokens in the user's session
-    session['access_token'] = access_token
-    session['refresh_token'] = refresh_token
+    session['access_token'] = token_info['access_token']
+    session['refresh_token'] = token_info.get('refresh_token')
+    session['token_expiry'] = token_info['expires_at']
 
     # Initialize the Spotify client with the user's access token
-    sp = spotipy.Spotify(auth=access_token)
+    sp = spotipy.Spotify(auth=session['access_token'])
 
     # Retrieve the user's information from Spotify
     user_info = sp.current_user()
-    if 'display_name' in user_info and user_info['display_name']:
-        name = user_info['display_name']
-    else:
-        name = user_info['id']
-
-    # Store the username in the session
-    session['name'] = name
+    session['name'] = user_info.get('display_name') or user_info['id']
 
     # Redirect the user to the main application page
     return redirect('/app')
 
 @app.route('/app')
+@login_required
 def app_route():
-    # Check if the user is authenticated
-    access_token = session.get('access_token')
-    if access_token is None:
-        return redirect('/login')
-
-    # Initialize the Spotify client with the user's access token
-    sp = spotipy.Spotify(auth=access_token)
-
-    # Retrieve the username from the session
-    name = session.get('name')
-
-    return render_template('dashboard.html', name=name)
-
+    return render_template('dashboard.html', name=session.get('name'))
 
 @app.route('/top-tracks')
+@login_required
 def top_tracks():
-    # Call the backend to get top tracks
     return render_template('top_tracks.html')
 
 @app.route('/top-tracks/<time_range>')
+@login_required
 def get_top_tracks(time_range):
-    access_token = session.get('access_token')
-    if access_token is None:
-        return redirect('/login')
-
-    sp = spotipy.Spotify(auth=access_token)
+    sp = spotipy.Spotify(auth=session['access_token'])
     tracks = user_stats.getTopTracks(sp, time_range)
-    
     return jsonify(tracks)
 
 
 @app.route('/top-artists')
+@login_required
 def top_artists():
     # Call the backend to get top artists
     return render_template('top_artists.html')
 
 
 @app.route('/top-artists/<time_range>')
+@login_required
 def get_top_artists(time_range):
     access_token = session.get('access_token')
     if access_token is None:
@@ -109,12 +112,14 @@ def get_top_artists(time_range):
 
 
 @app.route('/generate-songs')
+@login_required
 def generate_songs():
     # Call the backend to generate songs
     return render_template('generate_songs.html')
 
 
 @app.route('/search_song', methods=['POST'])
+@login_required
 def search_song():
     access_token = session.get('access_token')
     if access_token is None:
@@ -132,6 +137,7 @@ def search_song():
 
 
 @app.route('/get_user_playlists')
+@login_required
 def get_user_playlists():
     access_token = session.get('access_token')
     if access_token is None:
@@ -145,6 +151,7 @@ def get_user_playlists():
 
 
 @app.route('/get_playlist_songs', methods=['POST'])
+@login_required
 def get_playlist_songs():
     access_token = session.get('access_token')
     if access_token is None:
@@ -161,6 +168,7 @@ def get_playlist_songs():
     return jsonify(result)
 
 @app.route('/generate_playlist', methods=['POST'])
+@login_required
 def generate_playlist():
     access_token = session.get('access_token')
     if access_token is None:
@@ -192,12 +200,14 @@ def generate_playlist():
 
 
 @app.route('/sort-songs')
+@login_required
 def sort_songs():
     # Call the backend to sort songs
     return render_template('sort_songs.html')
 
 
 @app.route('/sort_songs_action', methods=['POST'])
+@login_required
 def sort_songs_action():
     access_token = session.get('access_token')
     if access_token is None:
@@ -230,6 +240,18 @@ def sort_songs_action():
 
     return jsonify(result)
 
+@app.before_request
+def check_token_expiration():
+    if 'access_token' in session and 'token_expiry' in session:
+        now = int(time.time())
+        if session['token_expiry'] - now < 60:
+            token_info = user_authentication.refresh_token(session['refresh_token'])
+            if token_info:
+                session['access_token'] = token_info['access_token']
+                session['token_expiry'] = token_info['expires_at']
+            else:
+                session.clear()
+                return redirect('/login')
 
 if __name__ == '__main__':
     app.run()
