@@ -60,7 +60,7 @@ def callback():
 @app.route('/app')
 def app_route():
     # Check if the user is authenticated
-    access_token = get_token()
+    access_token = session.get('access_token')
     if access_token is None:
         return redirect('/login')
 
