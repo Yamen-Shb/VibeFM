@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import spotipy
 from flask import Flask, render_template, request, redirect, session, jsonify
+import uuid
 import user_authentication
 import user_stats
 import spotify_utils
@@ -235,4 +236,4 @@ def sort_songs_action():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
