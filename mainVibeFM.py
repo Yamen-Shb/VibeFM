@@ -10,8 +10,6 @@ import playlist_manager
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
-print(f"Secret Key: {app.secret_key}")
-
 
 @app.route('/')
 def home():
@@ -19,48 +17,53 @@ def home():
 
 @app.route('/login')
 def login():
-    # Redirect the user to the Spotify authentication URL
+    # Generate a unique identifier for the session
+    session['uuid'] = str(uuid.uuid4())
+    
     auth_url = user_authentication.get_auth_url()
     return redirect(auth_url)
 
 @app.route('/logout')
 def logout():
-    session.clear()
     user_authentication.clear_cache()
+    session.clear()
     return redirect('/')
 
 @app.route('/callback')
 def callback():
-    # Handle the redirect from Spotify after authentication
     code = request.args.get('code')
     token_info = user_authentication.get_tokens(code)
     access_token = token_info['access_token']
     refresh_token = token_info.get('refresh_token')
 
-    # Store the tokens in the user's session
     session['access_token'] = access_token
     session['refresh_token'] = refresh_token
 
-    # Initialize the Spotify client with the user's access token
     sp = spotipy.Spotify(auth=access_token)
 
-    # Retrieve the user's information from Spotify
     user_info = sp.current_user()
     if 'display_name' in user_info and user_info['display_name']:
         name = user_info['display_name']
     else:
         name = user_info['id']
 
-    # Store the username in the session
     session['name'] = name
 
-    # Redirect the user to the main application page
     return redirect('/app')
+
+def get_token():
+    token_info = user_authentication.sp_oauth.get_cached_token()
+
+    if token_info and user_authentication.sp_oauth.is_token_expired(token_info):
+        token_info = user_authentication.sp_oauth.refresh_access_token(token_info['refresh_token'])
+        session['access_token'] = token_info['access_token']
+
+    return session.get('access_token')
 
 @app.route('/app')
 def app_route():
     # Check if the user is authenticated
-    access_token = session.get('access_token')
+    access_token = get_token()
     if access_token is None:
         return redirect('/login')
 
