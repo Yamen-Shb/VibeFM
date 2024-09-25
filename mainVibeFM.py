@@ -19,7 +19,7 @@ def home():
 @app.route('/login')
 def login():
     # Generate a unique identifier for the session
-    session['uuid'] = str(uuid.uuid4())
+    session['uuid'] = os.urandom(24).hex()
     
     auth_url = user_authentication.get_auth_url()
     return redirect(auth_url)
