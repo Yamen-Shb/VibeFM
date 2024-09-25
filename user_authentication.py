@@ -11,6 +11,11 @@ client_id = os.environ.get("SPOTIPY_CLIENT_ID")
 client_secret = os.environ.get("SPOTIPY_CLIENT_SECRET")
 redirect_uri = os.environ.get("SPOTIPY_REDIRECT_URI")
 
+# Load Genius and Last.fm API keys from environment variables
+# genius_client_id = os.environ.get('GENIUS_CLIENT_ID')
+# genius_client_secret = os.environ.get('GENIUS_CLIENT_SECRET')
+# lastfm_api_key = os.environ.get('LASTFM_API_KEY')
+
 # Define the Spotify OAuth scope
 scope = 'user-library-read playlist-modify-private user-read-recently-played user-top-read user-read-playback-state user-read-currently-playing playlist-modify-public playlist-modify-private playlist-read-private'
 
@@ -39,7 +44,7 @@ def get_auth_url():
 
 # Function to exchange the authorization code for an access token and refresh token
 def get_tokens(code):
-    token_info = create_spotify_oauth().get_access_token(code)
+    token_info = sp_oauth.get_access_token(code)
     return token_info
 
 # Function to clear the cache
