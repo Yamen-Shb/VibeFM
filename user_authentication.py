@@ -44,6 +44,7 @@ def get_auth_url():
 
 # Function to exchange the authorization code for an access token and refresh token
 def get_tokens(code):
+    sp_oauth = create_spotify_oauth()
     token_info = sp_oauth.get_access_token(code)
     return token_info
 
