@@ -1,4 +1,5 @@
 import os
+from flask import session
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
 
@@ -21,27 +22,33 @@ scope = 'user-library-read playlist-modify-private user-read-recently-played use
 # Set a custom cache path
 cache_path = "/tmp/.cache"  # Use /tmp for Vercel's ephemeral filesystem
 
-# Create the SpotifyOAuth object
-sp_oauth = SpotifyOAuth(
-    client_id=client_id,
-    client_secret=client_secret,
-    redirect_uri=redirect_uri,
-    scope=scope,
-    show_dialog=True,
-    cache_path=cache_path,
-    requests_timeout=30
-)
+# Function to get a session-specific cache path
+def session_cache_path():
+    return f"{cache_path}-{session.get('uuid')}"
+
+# Create the SpotifyOAuth object (move this inside a function)
+def create_spotify_oauth():
+    return SpotifyOAuth(
+        client_id=client_id,
+        client_secret=client_secret,
+        redirect_uri=redirect_uri,
+        scope=scope,
+        show_dialog=True,
+        cache_path=session_cache_path(),
+        requests_timeout=30
+    )
 
 # Function to get the Spotify authorization URL
 def get_auth_url():
-    return sp_oauth.get_authorize_url()
+    return create_spotify_oauth().get_authorize_url()
 
 # Function to exchange the authorization code for an access token and refresh token
 def get_tokens(code):
+    sp_oauth = create_spotify_oauth()
     token_info = sp_oauth.get_access_token(code)
     return token_info
 
 # Function to clear the cache
 def clear_cache():
-    if os.path.exists(cache_path):
-        os.remove(cache_path)
+    if os.path.exists(session_cache_path()):
+        os.remove(session_cache_path())
