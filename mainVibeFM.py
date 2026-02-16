@@ -5,7 +5,6 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 import user_authentication
 import user_stats
 import spotify_utils
-import recommend_songs
 import playlist_manager
 
 app = Flask(__name__)
@@ -108,29 +107,6 @@ def get_top_artists(time_range):
     return jsonify(artists)
 
 
-@app.route('/generate-songs')
-def generate_songs():
-    # Call the backend to generate songs
-    return render_template('generate_songs.html')
-
-
-@app.route('/search_song', methods=['POST'])
-def search_song():
-    access_token = session.get('access_token')
-    if access_token is None:
-        return jsonify({"error": "User not authenticated"}), 401
-
-    sp = spotipy.Spotify(auth=access_token)
-    data = request.json
-    query = data.get('query')
-
-    if not query:
-        return jsonify({"error": "Missing query"}), 400
-
-    result = spotify_utils.searchForSong(sp, query)
-    return jsonify(result)
-
-
 @app.route('/get_user_playlists')
 def get_user_playlists():
     access_token = session.get('access_token')
@@ -158,36 +134,6 @@ def get_playlist_songs():
         return jsonify({"error": "Missing playlist URI"}), 400
 
     result = playlist_manager.getPlaylistSongURIs(sp, playlistURI)
-    return jsonify(result)
-
-@app.route('/generate_playlist', methods=['POST'])
-def generate_playlist():
-    access_token = session.get('access_token')
-    if access_token is None:
-        return jsonify({"error": "User not authenticated"}), 401
-
-    sp = spotipy.Spotify(auth=access_token)
-    data = request.json
-    songURIs = data.get('song_uris')
-    numOfSongs = int(data.get('num_of_songs'))
-    playlistName = data.get('playlist_name')
-
-
-    if not songURIs or not numOfSongs or not playlistName:
-        return jsonify({"error": "Missing parameters"}), 400
-
-    result = recommend_songs.recommendBasedOnSeed(sp, songURIs, numOfSongs, playlistName)
-    
-    if 'error' in result:
-        return jsonify(result), 500
-
-    # Retrieve the cover image URL of the created playlist
-    playlist_id = result.get('playlist_id')
-    if playlist_id:
-        playlist = sp.playlist(playlist_id)
-        cover_url = playlist['images'][0]['url'] if playlist['images'] else None
-        result['coverUrl'] = cover_url
-
     return jsonify(result)
 
 

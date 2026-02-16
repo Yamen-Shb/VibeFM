@@ -1,4 +1,3 @@
-import spotify_utils
 import time
 
 def createPlaylist(sp, playlistName):

@@ -1,5 +1,3 @@
-import spotify_utils
-
 # Get the user's top tracks
 def getTopTracks(sp, timeRange):
     results = sp.current_user_top_tracks(limit=50, time_range=timeRange)

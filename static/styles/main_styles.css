@@ -270,8 +270,8 @@ main {
     border-radius: 15px;
 }
 
-/*Generate songs styles*/
-.generate-songs-container {
+/*Sort songs styles*/
+.sort-songs-container {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
@@ -394,23 +394,6 @@ input[type="number"]::-moz-placeholder {
     cursor: help;
     font-size: 18px;
     position: relative;
-}
-
-#generate-songs-button {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background-color: #1db954;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#generate-songs-button:hover {
-    background-color: #1ed760;
 }
 
 #sort-songs-button {
