@@ -1,0 +1,575 @@
+/* Discover page styles */
+
+.discover-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.discover-container h2 {
+    color: #1db954;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #b3b3b3;
+    font-size: 0.95em;
+    margin-bottom: 25px;
+}
+
+/* ── Seed Selection ── */
+
+.form-group {
+    text-align: left;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-wrapper input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #282828;
+    border-radius: 0 0 8px 8px;
+    z-index: 10;
+    max-height: 280px;
+    overflow-y: auto;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: left;
+}
+
+.search-result-item:hover {
+    background-color: #333;
+}
+
+.search-result-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.search-result-info {
+    overflow: hidden;
+    min-width: 0;
+}
+
+.search-result-info .track-name {
+    color: #fff;
+    font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-result-info .artist-name {
+    color: #b3b3b3;
+    font-size: 0.8em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Selected seeds */
+
+.selected-seeds {
+    margin: 20px 0;
+}
+
+.seeds-label {
+    color: #b3b3b3;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.seeds-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.seed-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #333;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.85em;
+    color: #fff;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.seed-chip img {
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.seed-chip .seed-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.seed-chip .remove-seed {
+    cursor: pointer;
+    color: #b3b3b3;
+    font-size: 1.1em;
+    line-height: 1;
+    transition: color 0.2s;
+    flex-shrink: 0;
+}
+
+.seed-chip .remove-seed:hover {
+    color: #ff4444;
+}
+
+/* Buttons */
+
+.seed-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: #1db954;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #1ed760;
+}
+
+.btn-secondary {
+    background-color: #333;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #444;
+}
+
+.btn-back {
+    border-color: #666;
+    color: #666;
+}
+
+.btn-back:hover:not(:disabled) {
+    background-color: rgba(102, 102, 102, 0.15);
+    border-color: #999;
+    color: #999;
+}
+
+.btn-back:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ── Loading ── */
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #333;
+    border-top: 4px solid #1db954;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 30px auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: #b3b3b3;
+    font-size: 1.1em;
+}
+
+.loading-seeds {
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 10px;
+    word-break: break-word;
+}
+
+/* ── Swipe Card ── */
+
+.swipe-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 0 10px;
+}
+
+.stat {
+    color: #b3b3b3;
+    font-size: 0.95em;
+}
+
+.card-container {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    min-height: 420px;
+    perspective: 1000px;
+}
+
+.swipe-card {
+    background-color: #282828;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    position: relative;
+    user-select: none;
+    touch-action: pan-y;
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+    -webkit-user-drag: none;
+}
+
+.swipe-card.animating {
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.card-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+
+.card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.preview-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 1.2em;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.preview-indicator.visible {
+    opacity: 1;
+}
+
+/* Swipe overlays */
+
+.swipe-overlay {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 1.6em;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.swipe-overlay-left {
+    left: 20px;
+    border: 3px solid #ff4444;
+    color: #ff4444;
+}
+
+.swipe-overlay-right {
+    right: 20px;
+    border: 3px solid #1db954;
+    color: #1db954;
+}
+
+.card-info {
+    padding: 16px 20px 8px;
+}
+
+.card-info h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-info p {
+    margin: 4px 0 0;
+    font-size: 0.9em;
+    color: #b3b3b3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-album {
+    font-size: 0.8em !important;
+    color: #666 !important;
+}
+
+/* Swipe buttons */
+
+.swipe-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.btn-swipe {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: none;
+    font-size: 1.6em;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-swipe:hover {
+    transform: scale(1.1);
+}
+
+.btn-skip {
+    border-color: #ff4444;
+    color: #ff4444;
+}
+
+.btn-skip:hover {
+    background-color: rgba(255, 68, 68, 0.15);
+}
+
+.btn-like {
+    border-color: #1db954;
+    color: #1db954;
+}
+
+.btn-like:hover {
+    background-color: rgba(29, 185, 84, 0.15);
+}
+
+.btn-preview {
+    border-color: #1db954;
+    color: #1db954;
+    width: 52px;
+    height: 52px;
+    font-size: 1.3em;
+}
+
+.btn-preview:hover {
+    background-color: rgba(29, 185, 84, 0.10);
+}
+
+.btn-preview.playing {
+    background-color: rgba(29, 185, 84, 0.25);
+    border-color: #1ed760;
+    color: #1ed760;
+}
+
+.keyboard-hint {
+    color: #555;
+    font-size: 0.8em;
+    margin-top: 16px;
+}
+
+/* ── Done Screen ── */
+
+#done-screen h2 {
+    margin-top: 40px;
+}
+
+#done-summary {
+    font-size: 1.1em;
+    color: #b3b3b3;
+}
+
+/* ── Target select in discover ── */
+#target-select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 600px) {
+    .discover-container {
+        padding: 10px;
+    }
+
+    .card-container {
+        max-width: 100%;
+        min-height: auto;
+    }
+
+    .swipe-card {
+        border-radius: 12px;
+    }
+
+    .card-info {
+        padding: 12px 16px 6px;
+    }
+
+    .card-info h3 {
+        font-size: 1.05em;
+    }
+
+    .btn-swipe {
+        width: 56px;
+        height: 56px;
+        font-size: 1.4em;
+    }
+
+    .btn-preview {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1em;
+    }
+
+    .swipe-buttons {
+        gap: 30px;
+    }
+
+    .seed-chip {
+        max-width: 100%;
+    }
+
+    .swipe-overlay {
+        font-size: 1.2em;
+        padding: 8px 16px;
+    }
+
+    .keyboard-hint {
+        display: none;
+    }
+
+    .loading-text {
+        font-size: 1em;
+    }
+
+    .subtitle {
+        font-size: 0.85em;
+    }
+}
+
+@media (max-width: 380px) {
+    .swipe-stats {
+        font-size: 0.85em;
+        padding: 0;
+    }
+
+    .card-info {
+        padding: 10px 12px 6px;
+    }
+
+    .card-info h3 {
+        font-size: 0.95em;
+    }
+
+    .card-info p {
+        font-size: 0.8em;
+    }
+
+    .btn-swipe {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2em;
+    }
+
+    .swipe-buttons {
+        gap: 24px;
+        margin-top: 14px;
+    }
+
+    .seed-chip {
+        font-size: 0.78em;
+        padding: 5px 10px;
+    }
+
+    .btn {
+        padding: 10px 18px;
+        font-size: 0.9em;
+    }
+
+    .discover-container h2 {
+        font-size: 1.2em;
+    }
+}

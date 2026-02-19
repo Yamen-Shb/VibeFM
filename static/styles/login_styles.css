@@ -10,6 +10,8 @@ body {
     justify-content: center;
     min-height: 100vh;
     position: relative;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .background-overlay {
@@ -38,6 +40,7 @@ p {
     margin: 10px 0;
     font-size: 1.2em; /* Slightly larger for better readability */
     color: #b3b3b3; /* Lighter text color */
+    padding: 0 10px;
 }
 
 .login-button {
@@ -52,6 +55,7 @@ p {
     text-decoration: none;
     cursor: pointer;
     transition: background-color 0.3s;
+    text-align: center;
 }
 
 .login-button:hover {
@@ -64,6 +68,7 @@ footer {
     text-align: center;
     font-size: 0.9em;
     color: #b3b3b3; /* Lighter text color */
+    padding: 0 10px;
 }
 
 footer a {
@@ -74,4 +79,35 @@ footer a {
 
 footer a:hover {
     color: #1ed760; /* Slightly lighter green on hover */
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    p {
+        font-size: 1em;
+    }
+
+    .login-button {
+        font-size: 1em;
+        padding: 12px 24px;
+    }
+}
+
+@media (max-width: 380px) {
+    h1 {
+        font-size: 1.5em;
+    }
+
+    p {
+        font-size: 0.9em;
+    }
+
+    .login-button {
+        font-size: 0.9em;
+        padding: 10px 20px;
+    }
 }

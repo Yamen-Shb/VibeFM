@@ -131,9 +131,9 @@ pip install -r requirements.txt
 
 # Create a .env file with your Spotify credentials
 cat <<EOF > .env
-SPOTIPY_CLIENT_ID=your_client_id
-SPOTIPY_CLIENT_SECRET=your_client_secret
-SPOTIPY_REDIRECT_URI=http://localhost:5000/callback
+CLIENT_ID=your_client_id
+CLIENT_SECRET=your_client_secret
+REDIRECT_URI=http://localhost:5000/callback
 SECRET_KEY=$(python -c "import os; print(os.urandom(24).hex())")
 EOF
 

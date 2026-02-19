@@ -1,11 +1,15 @@
 import os
 from dotenv import load_dotenv
 import spotipy
-from flask import Flask, render_template, request, redirect, session, jsonify
+from flask import Flask, render_template, request, redirect, session, jsonify, Response
+import json
 import user_authentication
 import user_stats
 import spotify_utils
 import playlist_manager
+import swipe_discovery
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
@@ -175,6 +179,129 @@ def sort_songs_action():
         result['coverUrl'] = cover_url
 
     return jsonify(result)
+
+
+@app.route('/discover')
+def discover():
+    access_token = session.get('access_token')
+    if access_token is None:
+        return redirect('/login')
+    return render_template('discover.html')
+
+
+@app.route('/api/discover/search_tracks', methods=['GET'])
+def search_tracks():
+    """Search Spotify tracks for seed selection."""
+    access_token = session.get('access_token')
+    if access_token is None:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    query = request.args.get('q', '').strip()
+    if not query:
+        return jsonify([])
+
+    sp = spotipy.Spotify(auth=access_token)
+    results = sp.search(q=query, type='track', limit=5)
+
+    tracks = []
+    for track in results['tracks']['items']:
+        tracks.append({
+            'id': track['id'],
+            'uri': track['uri'],
+            'name': track['name'],
+            'artist': ', '.join(a['name'] for a in track['artists']),
+            'album_art': track['album']['images'][-1]['url'] if track['album']['images'] else None
+        })
+
+    return jsonify(tracks)
+
+
+@app.route('/api/discover/generate', methods=['POST'])
+def generate_queue():
+    """Generate a swipe queue from seed tracks (non-streaming fallback)."""
+    access_token = session.get('access_token')
+    if access_token is None:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    sp = spotipy.Spotify(auth=access_token)
+    data = request.json or {}
+    seed_uris = data.get('seed_uris', [])
+
+    try:
+        queue, seeds_used = swipe_discovery.generate_swipe_queue(
+            sp,
+            seed_uris=seed_uris if seed_uris else None,
+            total_tracks=50
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    return jsonify({
+        "queue": queue,
+        "seeds_used": seeds_used
+    })
+
+
+@app.route('/api/discover/generate_stream', methods=['POST'])
+def generate_queue_stream():
+    """Generate a swipe queue with Server-Sent Events for progressive loading."""
+    access_token = session.get('access_token')
+    if access_token is None:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    sp = spotipy.Spotify(auth=access_token)
+    data = request.json or {}
+    seed_uris = data.get('seed_uris', [])
+
+    def event_stream():
+        try:
+            for chunk in swipe_discovery.generate_swipe_queue_streaming(
+                sp,
+                seed_uris=seed_uris if seed_uris else None,
+                total_tracks=50
+            ):
+                yield f"data: {json.dumps(chunk)}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e), 'done': True})}\n\n"
+
+    return Response(event_stream(), mimetype='text/event-stream',
+                    headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
+
+
+@app.route('/api/discover/swipe_right', methods=['POST'])
+def swipe_right():
+    """Resolve a Last.fm track to Spotify and add to liked songs or a playlist."""
+    access_token = session.get('access_token')
+    if access_token is None:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    sp = spotipy.Spotify(auth=access_token)
+    data = request.json
+    track_name = data.get('name')
+    artist_name = data.get('artist')
+    target = data.get('target', 'liked')  # 'liked' or a playlist ID
+
+    if not track_name or not artist_name:
+        return jsonify({"error": "Missing track name or artist"}), 400
+
+    # Resolve the Last.fm track to Spotify
+    resolved = swipe_discovery.resolve_track_to_spotify(sp, track_name, artist_name)
+
+    if not resolved:
+        return jsonify({"error": "Could not find this track on Spotify", "not_found": True}), 404
+
+    track_id = resolved['id']
+    track_uri = resolved['uri']
+
+    try:
+        if target == 'liked':
+            sp.current_user_saved_tracks_add([track_id])
+        else:
+            sp.playlist_add_items(target, [track_uri])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    return jsonify({"success": True, "spotify_uri": track_uri})
 
 
 if __name__ == '__main__':

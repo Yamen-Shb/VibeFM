@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover - VibeFM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main_styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/discover_styles.css') }}">
+</head>
+<body>
+    <header>
+        <a class="back-button" href="/app">Back to Dashboard</a>
+        <a class="logout-button" href="/logout">Logout</a>
+    </header>
+    <main>
+        <h1>Discover</h1>
+
+        <!-- Phase 1: Seed Selection -->
+        <div id="seed-setup" class="discover-container">
+            <h2>Choose Your Seeds</h2>
+            <p class="subtitle">Pick up to 5 songs to base your discovery on, or use random liked songs.</p>
+
+            <!-- Target selection -->
+            <div class="form-group">
+                <label for="target-select">Add liked songs to:</label>
+                <select id="target-select">
+                    <option value="liked">Liked Songs</option>
+                </select>
+            </div>
+
+            <!-- Search bar -->
+            <div class="form-group">
+                <label for="seed-search">Search for seed songs:</label>
+                <div class="search-wrapper">
+                    <input type="text" id="seed-search" placeholder="Search by song or artist..." autocomplete="off">
+                    <div id="search-results" class="search-results hidden"></div>
+                </div>
+            </div>
+
+            <!-- Selected seeds -->
+            <div id="selected-seeds" class="selected-seeds">
+                <p class="seeds-label">Selected seeds (<span id="seed-count">0</span>/5):</p>
+                <div id="seeds-list" class="seeds-list"></div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="seed-actions">
+                <button id="start-random-btn" class="btn btn-secondary">Use Random Liked Songs</button>
+                <button id="start-seeds-btn" class="btn btn-primary" disabled>Start Discovering</button>
+            </div>
+        </div>
+
+        <!-- Phase 2: Loading -->
+        <div id="loading-screen" class="discover-container hidden">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Finding tracks similar to your seeds...</p>
+            <div id="loading-seeds" class="loading-seeds"></div>
+        </div>
+
+        <!-- Phase 3: Swipe UI -->
+        <div id="swipe-screen" class="discover-container hidden">
+            <!-- Stats bar -->
+            <div class="swipe-stats">
+                <span id="stat-skipped" class="stat">⏭️ <span id="skipped-count">0</span></span>
+                <span id="stat-remaining" class="stat">🎵 <span id="remaining-count">0</span> left</span>
+                <span id="stat-liked" class="stat">❤️ <span id="liked-count">0</span></span>
+            </div>
+
+            <!-- Card stack -->
+            <div id="card-container" class="card-container">
+                <div id="swipe-card" class="swipe-card">
+                    <div class="card-image-wrapper">
+                        <img id="card-art" src="" alt="Album Art">
+                        <div id="preview-indicator" class="preview-indicator">▶</div>
+                        <div id="swipe-overlay-left" class="swipe-overlay swipe-overlay-left">SKIP</div>
+                        <div id="swipe-overlay-right" class="swipe-overlay swipe-overlay-right">LIKE</div>
+                    </div>
+                    <div class="card-info">
+                        <h3 id="card-title"></h3>
+                        <p id="card-artist"></p>
+                        <p id="card-album" class="card-album"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Swipe buttons -->
+            <div class="swipe-buttons">
+                <button id="btn-skip" class="btn-swipe btn-skip">✕</button>
+                <button id="btn-back" class="btn-swipe btn-back" disabled>↶</button>
+                <button id="btn-like" class="btn-swipe btn-like">♥</button>
+            </div>
+
+            <!-- Keyboard hint -->
+            <p class="keyboard-hint">← Skip &nbsp;|&nbsp; ↶ Back &nbsp;|&nbsp; Tap card to play/pause &nbsp;|&nbsp; Like →</p>
+        </div>
+
+        <!-- Phase 4: Done -->
+        <div id="done-screen" class="discover-container hidden">
+            <h2>Session Complete!</h2>
+            <p id="done-summary"></p>
+            <div class="seed-actions">
+                <button id="restart-btn" class="btn btn-primary">Start New Session</button>
+            </div>
+        </div>
+    </main>
+    <script src="{{ url_for('static', filename='scripts/discover.js') }}"></script>
+</body>
+</html>
